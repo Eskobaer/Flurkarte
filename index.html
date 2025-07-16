@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Flurkarte PDF Tool (Hessen)</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 2rem;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+    h2 {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h2>Flurkarte (Hessen) PDF-Tool</h2>
+  <label for="adresse">Adresse eingeben:</label>
+  <input type="text" id="adresse" placeholder="z. B. Gemündener Straße 5, 61276 Weilrod">
+  <button onclick="verarbeiteAdresse()">Flurkarte anzeigen & PDF speichern</button>
+
+  <script>
+    async function verarbeiteAdresse() {
+      const adresse = document.getElementById("adresse").value.trim();
+      if (!adresse) {
+        alert("Bitte eine Adresse eingeben.");
+        return;
+      }
+
+      const encoded = encodeURIComponent(adresse);
+      const nominatimUrl = `https://nominatim.openstreetmap.org/search?q=${encoded}&format=json&limit=1`;
+
+      try {
+        const res = await fetch(nominatimUrl);
+        const data = await res.json();
+        if (data.length === 0) {
+          alert("Adresse nicht gefunden.");
+          return;
+        }
+
+        const lat = data[0].lat;
+        const lon = data[0].lon;
+
+        // Geoportal-Link mit Koordinaten
+        const geoportalUrl = `https://gds.hessen.de/karte?zoom=10&center=${lon},${lat}&marker=${lon},${lat}`;
+
+        // PDF-Dateiname vorbereiten
+        const straße = adresse.split(',')[0].replace(/\s+/g, '_');
+        const pdfName = `Flurkarte_${straße}.pdf`;
+
+        // Link zur Ansicht öffnen
+        window.open(geoportalUrl, '_blank');
+
+        // Optional: Vorschlag für PDF-Namen in Konsole ausgeben
+        console.log("PDF speichern als:", pdfName);
+        alert("Bitte im geöffneten Fenster PDF exportieren und speichern als: " + pdfName);
+
+      } catch (err) {
+        console.error(err);
+        alert("Fehler bei der Verarbeitung.");
+      }
+    }
+  </script>
+</body>
+</html>
