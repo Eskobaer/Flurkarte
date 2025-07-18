@@ -1,0 +1,33 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Flurkarte Hessen – Kartenviewer</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: auto; padding: 2rem; }
+    input, button { width: 100%; padding: 10px; margin-top: 10px; font-size: 16px; }
+    h2 { text-align: center; }
+  </style>
+</head>
+<body>
+  <h2>Flurkarte (Hessen) – Kartenviewer öffnen</h2>
+  <label for="adresse">Adresse eingeben:</label>
+  <input type="text" id="adresse" placeholder="z. B. Gemündener Straße 5, 61276 Weilrod">
+  <button onclick="öffneViewer()">Karte anzeigen</button>
+
+  <script>
+    function öffneViewer() {
+      const adresse = document.getElementById("adresse").value.trim();
+      if (!adresse) {
+        alert("Bitte eine Adresse eingeben.");
+        return;
+      }
+
+      const encoded = encodeURIComponent(adresse);
+      const url = `https://geoportal.hessen.de/karte?search=${encoded}`;
+      window.open(url, "_blank");
+    }
+  </script>
+</body>
+</html>
